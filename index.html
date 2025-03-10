@@ -149,24 +149,47 @@
         </div>
         <p>Condições especiais por tempo limitado!</p>
 
-        <form>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
+       <form id="whatsappForm">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
 
-            <label for="contato">Contato:</label>
-            <input type="tel" id="contato" name="contato" required>
+    <label for="contato">Contato:</label>
+    <input type="tel" id="contato" name="contato" required>
 
-            <label for="placa">Placa:</label>
-            <input type="text" id="placa" name="placa" required>
+    <label for="placa">Placa:</label>
+    <input type="text" id="placa" name="placa" required>
 
-            <label for="veiculo">Marca, Modelo e Ano do Veículo:</label>
-            <input type="text" id="veiculo" name="veiculo" required>
+    <label for="veiculo">Marca, Modelo e Ano do Veículo:</label>
+    <input type="text" id="veiculo" name="veiculo" required>
 
-            <label for="descricao">Conte um pouco do que você precisa:</label>
-            <textarea id="descricao" name="descricao" rows="4" required></textarea>
+    <label for="descricao">Conte um pouco do que você precisa:</label>
+    <textarea id="descricao" name="descricao" rows="4" required></textarea>
 
-            <button type="submit">Solicitar Plano Personalizado</button>
-        </form>
+    <button type="submit">Solicitar Plano Personalizado</button>
+</form>
+
+<script>
+document.getElementById("whatsappForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    var nome = document.getElementById("nome").value;
+    var contato = document.getElementById("contato").value;
+    var placa = document.getElementById("placa").value;
+    var veiculo = document.getElementById("veiculo").value;
+    var descricao = document.getElementById("descricao").value;
+
+    var whatsappMessage = `Olá, meu nome é ${nome}%0A` +
+                          `Contato: ${contato}%0A` +
+                          `Placa do veículo: ${placa}%0A` +
+                          `Marca, Modelo e Ano: ${veiculo}%0A` +
+                          `Descrição: ${descricao}`;
+
+    var phoneNumber = "5562998643045";
+    var whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${whatsappMessage}`;
+
+    window.open(whatsappURL, "_blank");
+});
+</script>
 
         <div class="testimonials">
             <h2>O que nossos clientes dizem</h2>
