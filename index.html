@@ -144,7 +144,7 @@
         </div>
 
         <div> <a href="#" class="cta">Montar Meu Plano</a>
-<p class="highlight">Solicite o código Promocional ao Representante e ganhe 20% de desconto!</p>
+<p class="highlight">Solicite o Cupom Promocional ao representante e ganhe 20% de desconto!</p>
             <a href="Planos.html" class="cta">Conheça Nossos Planos</a>
         </div>
         <form onsubmit="enviarWhatsApp(event)">
@@ -161,7 +161,7 @@
     <input type="text" id="veiculo" name="veiculo" required>
 
     <label for="descricao">Conte um pouco do que você precisa:</label>
-    <textarea id="descricao" name="descricao" rows="4" required></textarea>
+<textarea id="descricao" name="descricao" rows="4" required>Inclua o Cupom Aqui!</textarea>
 
     <button type="submit">Solicitar Plano Personalizado</button>
 </form>
@@ -182,7 +182,7 @@
         }
         mensagem += ` Meu veículo é ${veiculo}. Aqui está minha necessidade: ${descricao}.`;
 
-        let numeroWhatsApp = "62998643045";
+        let numeroWhatsApp = "5562998643045";
         let url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
 
         window.open(url, "_blank");
