@@ -40,12 +40,16 @@
             color: #007BFF;
             margin-top: 15px;
         }
+        .whatsapp-contact {
+            margin-top: 15px;
+        }
+        .whatsapp-icon {
+            width: 50px;
+            height: 50px;
+        }
     </style>
 </head>
 <body>
-    <div>
-        <a href="index.html" class="cta">Voltar</a>
-    </div>
     <div class="container">
         <h2>Consulta de Categoria do Veículo</h2>
         <label>Marca:</label>
@@ -135,7 +139,15 @@
                      <p>Plano PLENO: ${planos['Plano PLENO'] || 'Indisponível'}</p>
                      <p>Plano PREMIUM: ${planos['Plano PREMIUM'] || 'Indisponível'}</p>`;
             } else {
-                document.getElementById('plano').textContent = "Nenhum plano encontrado para esse valor.";
+                document.getElementById('plano').innerHTML = `Nenhum plano encontrado para esse valor. <br>
+<br>
+Entrar em Contato.<br>
+                    <div class="whatsapp-contact"> 
+                        <a href="https://linktr.ee/agvcatalao" target="_blank">
+                            <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/iconewh2.png" class="whatsapp-icon">
+                        </a>
+                        <p>Paulo Felipe - 62 9 9864-3045 - Consultor Executivo</p>
+                    </div>`;
             }
         }
         
