@@ -63,25 +63,23 @@
     
     <script>
         let dadosVeiculos = [];
-        let precosCategorias = {};
+        let precosPorCategoria = {};
 
-        async function carregarArquivo() {
+        async function carregarDados() {
             const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/enquadramento_veiculos.xlsx');
             const data = await response.arrayBuffer();
             const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
             dadosVeiculos = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             popularMarcas();
-            console.log("Arquivo de enquadramento carregado com sucesso!");
-        }
 
-        async function carregarPrecos() {
-            const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/precos.xlsx');
-            const data = await response.arrayBuffer();
-            const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
-            workbook.SheetNames.forEach(nome => {
-                precosCategorias[nome] = XLSX.utils.sheet_to_json(workbook.Sheets[nome]);
+            const precosResponse = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/precos.xlsx');
+            const precosData = await precosResponse.arrayBuffer();
+            const precosWorkbook = XLSX.read(new Uint8Array(precosData), { type: 'array' });
+            precosWorkbook.SheetNames.forEach(sheet => {
+                const sheetData = XLSX.utils.sheet_to_json(precosWorkbook.Sheets[sheet]);
+                precosPorCategoria[sheet.trim().toUpperCase()] = sheetData;
             });
-            console.log("Arquivo de preços carregado com sucesso!");
+            console.log("Dados carregados com sucesso!");
         }
 
         function popularMarcas() {
@@ -111,41 +109,38 @@
         function determinarEnquadramento() {
             const valorFipe = parseFloat(document.getElementById('valorFipe').value);
             if (isNaN(valorFipe)) return;
-
-            let enquadramento;
-            if (valorFipe <= 100000) enquadramento = "LEVE";
-            else if (valorFipe <= 200000) enquadramento = "SUV SEDAN";
-            else if (valorFipe <= 300000) enquadramento = "CAMINHONETE";
-            else enquadramento = "PREMIUM";
-
-            buscarPrecoPlano(valorFipe, enquadramento);
+            const categoria = buscarCategoria();
+            buscarPrecoPlano(valorFipe, categoria);
         }
 
-        function buscarPrecoPlano(valorFipe, enquadramento) {
-            if (!precosCategorias[enquadramento]) {
-                document.getElementById('resultado').textContent = "Nenhum plano encontrado para essa categoria.";
+        function buscarCategoria() {
+            const modeloSelecionado = document.getElementById('modelo').value;
+            const veiculo = dadosVeiculos.find(v => v.Modelo === modeloSelecionado);
+            return veiculo ? veiculo.Categoria.trim().toUpperCase() : "LEVE";
+        }
+
+        function buscarPrecoPlano(valorFipe, categoria) {
+            const tabela = precosPorCategoria[categoria] || [];
+            const faixaValida = tabela.filter(item => item.FIPE_MIN && item.FIPE_MAX && valorFipe >= item.FIPE_MIN && valorFipe <= item.FIPE_MAX);
+            
+            if (faixaValida.length === 0) {
+                document.getElementById('resultado').textContent = "Nenhum plano encontrado para esse valor.";
                 return;
             }
             
-            let planoEncontrado = precosCategorias[enquadramento].reduce((prev, curr) => 
-                Math.abs(curr.FIPE - valorFipe) < Math.abs(prev.FIPE - valorFipe) ? curr : prev
-            );
-
-            if (planoEncontrado) {
-                document.getElementById('resultado').innerHTML = `
-                    <p>Enquadramento: ${enquadramento}</p>
-                    <p>Plano Roubo e Furto: R$ ${planoEncontrado["Plano ROUBO E FURTO"]}</p>
-                    <p>Plano Básico: R$ ${planoEncontrado["Plano BÁSICO"]}</p>
-                    <p>Plano Flex: R$ ${planoEncontrado["Plano FLEX"]}</p>
-                    <p>Plano Pleno: R$ ${planoEncontrado["Plano PLENO"]}</p>
-                    <p>Plano Premium: ${planoEncontrado["Plano PREMIUM"]}</p>`;
-            } else {
-                document.getElementById('resultado').textContent = "Nenhum plano encontrado para esse valor.";
-            }
+            let planoEncontrado = faixaValida[0];
+            let resultadoHTML = `<p>Enquadramento: ${categoria}</p>`;
+            
+            Object.keys(planoEncontrado).forEach(plano => {
+                if (plano.includes("Plano") && planoEncontrado[plano] && planoEncontrado[plano] !== "Indisponível") {
+                    resultadoHTML += `<p>${plano}: R$ ${planoEncontrado[plano]}</p>`;
+                }
+            });
+            
+            document.getElementById('resultado').innerHTML = resultadoHTML || "Nenhum plano disponível.";
         }
-        
-        carregarArquivo();
-        carregarPrecos();
+
+        carregarDados();
     </script>
 </body>
 </html>
