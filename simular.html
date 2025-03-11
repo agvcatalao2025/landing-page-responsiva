@@ -78,8 +78,10 @@
             const data = await response.arrayBuffer();
             const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
             workbook.SheetNames.forEach(sheetName => {
-                precosVeiculos[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                const cleanSheetName = sheetName.replace(/\s/g, ''); // Removendo espaços
+                precosVeiculos[cleanSheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
             });
+            console.log("Categorias carregadas:", Object.keys(precosVeiculos)); // Log para depuração
         }
 
         function popularMarcas() {
@@ -110,13 +112,13 @@
             const modeloSelecionado = document.getElementById('modelo').value;
             const veiculo = dadosVeiculos.find(v => v.Modelo === modeloSelecionado);
             if (veiculo) {
-                document.getElementById('categoria').textContent = `Categoria: ${veiculo.Categoria}`;
+                document.getElementById('categoria').textContent = `Categoria: ${veiculo.Categoria.replace(/\s/g, '')}`;
             }
         }
 
         function buscarPlano() {
             const valorFipe = parseFloat(document.getElementById('valorFipe').value);
-            const categoria = document.getElementById('categoria').textContent.replace('Categoria: ', '').trim();
+            let categoria = document.getElementById('categoria').textContent.replace('Categoria: ', '').trim().replace(/\s/g, '');
             
             if (!categoria || !precosVeiculos[categoria] || isNaN(valorFipe)) return;
             
