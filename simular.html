@@ -27,7 +27,7 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
-        select {
+        select, input {
             padding: 10px;
             margin: 10px 0;
             width: 100%;
@@ -56,10 +56,14 @@
         </select>
         <br>
         <p id="categoria"></p>
+        <label>Valor FIPE:</label>
+        <input type="number" id="valorFipe" placeholder="Digite o valor da FIPE" oninput="buscarPlano()">
+        <p id="plano"></p>
     </div>
     
     <script>
         let dadosVeiculos = [];
+        let precosVeiculos = {};
 
         async function carregarArquivo() {
             const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/enquadramento_veiculos.xlsx');
@@ -67,7 +71,15 @@
             const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
             dadosVeiculos = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             popularMarcas();
-            console.log("Arquivo de enquadramento carregado com sucesso!");
+        }
+
+        async function carregarPrecos() {
+            const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/precos.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
+            workbook.SheetNames.forEach(sheetName => {
+                precosVeiculos[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            });
         }
 
         function popularMarcas() {
@@ -101,8 +113,29 @@
                 document.getElementById('categoria').textContent = `Categoria: ${veiculo.Categoria}`;
             }
         }
+
+        function buscarPlano() {
+            const valorFipe = parseFloat(document.getElementById('valorFipe').value);
+            const categoria = document.getElementById('categoria').textContent.replace('Categoria: ', '').trim();
+            
+            if (!categoria || !precosVeiculos[categoria] || isNaN(valorFipe)) return;
+            
+            let planos = precosVeiculos[categoria].find(entry => parseFloat(String(entry.FIPE).replace('R$', '').replace(',', '').trim()) >= valorFipe);
+            
+            if (planos) {
+                document.getElementById('plano').innerHTML = 
+                    `<p>Plano ROUBO E FURTO: ${planos['Plano ROUBO E FURTO'] || 'Indisponível'}</p>
+                     <p>Plano BÁSICO: ${planos['Plano BÁSICO'] || 'Indisponível'}</p>
+                     <p>Plano FLEX: ${planos['Plano FLEX'] || 'Indisponível'}</p>
+                     <p>Plano PLENO: ${planos['Plano PLENO'] || 'Indisponível'}</p>
+                     <p>Plano PREMIUM: ${planos['Plano PREMIUM'] || 'Indisponível'}</p>`;
+            } else {
+                document.getElementById('plano').textContent = "Nenhum plano encontrado para esse valor.";
+            }
+        }
         
         carregarArquivo();
+        carregarPrecos();
     </script>
 </body>
 </html>
