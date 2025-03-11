@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Categoria</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #F9F9F9;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+        h2 {
+            color: #007BFF;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        select, input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        p {
+            font-weight: bold;
+            color: #007BFF;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Consulta de Categoria do Veículo</h2>
+        <label>Marca:</label>
+        <select id="marca" onchange="atualizarModelos()">
+            <option value="">Selecione a marca</option>
+        </select>
+        <br>
+        <label>Modelo:</label>
+        <select id="modelo" onchange="buscarCategoria()">
+            <option value="">Selecione o modelo</option>
+        </select>
+        <br>
+        <label>Valor FIPE:</label>
+        <input type="number" id="valorFipe" placeholder="Digite o valor do veículo">
+        <br>
+        <p id="resultado"></p>
+    </div>
+    
+    <script>
+        let dadosVeiculos = [];
+        
+        async function carregarArquivo() {
+            const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/enquadramento_veiculos.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            dadosVeiculos = XLSX.utils.sheet_to_json(sheet);
+            popularMarcas();
+            console.log("Arquivo carregado com sucesso!");
+        }
+        
+        function popularMarcas() {
+            const marcas = [...new Set(dadosVeiculos.map(v => v.Marca))].sort();
+            const selectMarca = document.getElementById('marca');
+            marcas.forEach(marca => {
+                const option = document.createElement('option');
+                option.value = marca;
+                option.textContent = marca;
+                selectMarca.appendChild(option);
+            });
+        }
+
+        function atualizarModelos() {
+            const marcaSelecionada = document.getElementById('marca').value;
+            const modelos = dadosVeiculos.filter(v => v.Marca === marcaSelecionada).map(v => v.Modelo);
+            const selectModelo = document.getElementById('modelo');
+            selectModelo.innerHTML = '<option value="">Selecione o modelo</option>';
+            modelos.forEach(modelo => {
+                const option = document.createElement('option');
+                option.value = modelo;
+                option.textContent = modelo;
+                selectModelo.appendChild(option);
+            });
+        }
+
+        function buscarCategoria() {
+            const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value;
+            const resultado = document.getElementById('resultado');
+            
+            if (!marca || !modelo) {
+                resultado.textContent = "Selecione a marca e o modelo.";
+                return;
+            }
+            
+            const veiculo = dadosVeiculos.find(v => v.Marca === marca && v.Modelo === modelo);
+            
+            resultado.textContent = veiculo ? `Categoria: ${veiculo.Categoria}` : "Veículo não encontrado.";
+        }
+        
+        carregarArquivo();
+    </script>
+</body>
+</html>
