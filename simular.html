@@ -63,15 +63,13 @@
     
     <script>
         let dadosVeiculos = [];
-        let precosVeiculos = [];
+        let precosCategorias = {};
 
         async function carregarArquivo() {
             const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/enquadramento_veiculos.xlsx');
             const data = await response.arrayBuffer();
             const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            dadosVeiculos = XLSX.utils.sheet_to_json(sheet);
+            dadosVeiculos = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             popularMarcas();
             console.log("Arquivo de enquadramento carregado com sucesso!");
         }
@@ -80,9 +78,9 @@
             const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/precos.xlsx');
             const data = await response.arrayBuffer();
             const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            precosVeiculos = XLSX.utils.sheet_to_json(sheet);
+            workbook.SheetNames.forEach(nome => {
+                precosCategorias[nome] = XLSX.utils.sheet_to_json(workbook.Sheets[nome]);
+            });
             console.log("Arquivo de preços carregado com sucesso!");
         }
 
@@ -114,22 +112,28 @@
             const valorFipe = parseFloat(document.getElementById('valorFipe').value);
             if (isNaN(valorFipe)) return;
 
-            let enquadramento = "LEVE";
-            if (valorFipe > 100000) enquadramento = "SUV / SEDAN";
-            if (valorFipe > 200000) enquadramento = "CAMINHONETE";
-            if (valorFipe > 300000) enquadramento = "PREMIUM";
+            let enquadramento;
+            if (valorFipe <= 100000) enquadramento = "LEVE";
+            else if (valorFipe <= 200000) enquadramento = "SUV SEDAN";
+            else if (valorFipe <= 300000) enquadramento = "CAMINHONETE";
+            else enquadramento = "PREMIUM";
 
-            buscarPrecoPlano(valorFipe);
+            buscarPrecoPlano(valorFipe, enquadramento);
         }
 
-        function buscarPrecoPlano(valorFipe) {
-            let planoEncontrado = precosVeiculos.reduce((prev, curr) => 
+        function buscarPrecoPlano(valorFipe, enquadramento) {
+            if (!precosCategorias[enquadramento]) {
+                document.getElementById('resultado').textContent = "Nenhum plano encontrado para essa categoria.";
+                return;
+            }
+            
+            let planoEncontrado = precosCategorias[enquadramento].reduce((prev, curr) => 
                 Math.abs(curr.FIPE - valorFipe) < Math.abs(prev.FIPE - valorFipe) ? curr : prev
             );
 
             if (planoEncontrado) {
                 document.getElementById('resultado').innerHTML = `
-                    <p>Enquadramento: ${planoEncontrado.Categoria}</p>
+                    <p>Enquadramento: ${enquadramento}</p>
                     <p>Plano Roubo e Furto: R$ ${planoEncontrado["Plano ROUBO E FURTO"]}</p>
                     <p>Plano Básico: R$ ${planoEncontrado["Plano BÁSICO"]}</p>
                     <p>Plano Flex: R$ ${planoEncontrado["Plano FLEX"]}</p>
