@@ -56,14 +56,15 @@
         </select>
         <br>
         <label>Valor FIPE:</label>
-        <input type="number" id="valorFipe" placeholder="Digite o valor do veículo">
+        <input type="number" id="valorFipe" placeholder="Digite o valor do veículo" oninput="determinarEnquadramento()">
         <br>
         <p id="resultado"></p>
     </div>
     
     <script>
         let dadosVeiculos = [];
-        
+        let precosVeiculos = [];
+
         async function carregarArquivo() {
             const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/enquadramento_veiculos.xlsx');
             const data = await response.arrayBuffer();
@@ -72,9 +73,19 @@
             const sheet = workbook.Sheets[sheetName];
             dadosVeiculos = XLSX.utils.sheet_to_json(sheet);
             popularMarcas();
-            console.log("Arquivo carregado com sucesso!");
+            console.log("Arquivo de enquadramento carregado com sucesso!");
         }
-        
+
+        async function carregarPrecos() {
+            const response = await fetch('https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/precos.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            precosVeiculos = XLSX.utils.sheet_to_json(sheet);
+            console.log("Arquivo de preços carregado com sucesso!");
+        }
+
         function popularMarcas() {
             const marcas = [...new Set(dadosVeiculos.map(v => v.Marca))].sort();
             const selectMarca = document.getElementById('marca');
@@ -99,22 +110,38 @@
             });
         }
 
-        function buscarCategoria() {
-            const marca = document.getElementById('marca').value;
-            const modelo = document.getElementById('modelo').value;
-            const resultado = document.getElementById('resultado');
-            
-            if (!marca || !modelo) {
-                resultado.textContent = "Selecione a marca e o modelo.";
-                return;
+        function determinarEnquadramento() {
+            const valorFipe = parseFloat(document.getElementById('valorFipe').value);
+            if (isNaN(valorFipe)) return;
+
+            let enquadramento = "LEVE";
+            if (valorFipe > 100000) enquadramento = "SUV / SEDAN";
+            if (valorFipe > 200000) enquadramento = "CAMINHONETE";
+            if (valorFipe > 300000) enquadramento = "PREMIUM";
+
+            buscarPrecoPlano(valorFipe);
+        }
+
+        function buscarPrecoPlano(valorFipe) {
+            let planoEncontrado = precosVeiculos.reduce((prev, curr) => 
+                Math.abs(curr.FIPE - valorFipe) < Math.abs(prev.FIPE - valorFipe) ? curr : prev
+            );
+
+            if (planoEncontrado) {
+                document.getElementById('resultado').innerHTML = `
+                    <p>Enquadramento: ${planoEncontrado.Categoria}</p>
+                    <p>Plano Roubo e Furto: R$ ${planoEncontrado["Plano ROUBO E FURTO"]}</p>
+                    <p>Plano Básico: R$ ${planoEncontrado["Plano BÁSICO"]}</p>
+                    <p>Plano Flex: R$ ${planoEncontrado["Plano FLEX"]}</p>
+                    <p>Plano Pleno: R$ ${planoEncontrado["Plano PLENO"]}</p>
+                    <p>Plano Premium: ${planoEncontrado["Plano PREMIUM"]}</p>`;
+            } else {
+                document.getElementById('resultado').textContent = "Nenhum plano encontrado para esse valor.";
             }
-            
-            const veiculo = dadosVeiculos.find(v => v.Marca === marca && v.Modelo === modelo);
-            
-            resultado.textContent = veiculo ? `Categoria: ${veiculo.Categoria}` : "Veículo não encontrado.";
         }
         
         carregarArquivo();
+        carregarPrecos();
     </script>
 </body>
 </html>
