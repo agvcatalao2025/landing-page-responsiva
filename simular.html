@@ -88,10 +88,9 @@
             const data = await response.arrayBuffer();
             const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
             workbook.SheetNames.forEach(sheetName => {
-                const cleanSheetName = sheetName.replace(/\s/g, ''); // Removendo espaços
+                const cleanSheetName = sheetName.replace(/\s/g, '');
                 precosVeiculos[cleanSheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
             });
-            console.log("Categorias carregadas:", Object.keys(precosVeiculos)); // Log para depuração
         }
 
         function popularMarcas() {
@@ -140,11 +139,16 @@
                      <p>Plano BÁSICO: ${planos['Plano BÁSICO'] || 'Indisponível'}</p>
                      <p>Plano FLEX: ${planos['Plano FLEX'] || 'Indisponível'}</p>
                      <p>Plano PLENO: ${planos['Plano PLENO'] || 'Indisponível'}</p>
-                     <p>Plano PREMIUM: ${planos['Plano PREMIUM'] || 'Indisponível'}</p>`;
+                     <p>Plano PREMIUM: ${planos['Plano PREMIUM'] || 'Indisponível'}</p>
+                     <br>Entre em contato para mais detalhes:<br>
+                     <div class="whatsapp-contact"> 
+                         <a href="https://linktr.ee/agvcatalao" target="_blank">
+                             <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/iconewh2.png" class="whatsapp-icon">
+                         </a>
+                         <p>Paulo Felipe - 62 9 9864-3045 - Consultor Executivo</p>
+                     </div>`;
             } else {
-                document.getElementById('plano').innerHTML = `Nenhum plano encontrado para esse valor. <br>
-<br>
-Entrar em Contato.<br>
+                document.getElementById('plano').innerHTML = `Nenhum plano encontrado para esse valor. <br>Entrar em Contato.<br>
                     <div class="whatsapp-contact"> 
                         <a href="https://linktr.ee/agvcatalao" target="_blank">
                             <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/iconewh2.png" class="whatsapp-icon">
@@ -157,5 +161,5 @@ Entrar em Contato.<br>
         carregarArquivo();
         carregarPrecos();
     </script>
-</body>.
+</body>
 </html>
