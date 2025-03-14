@@ -1,136 +1,242 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proteção Veicular</title>
+    <title>Proteção Veicular AGV</title>
     <style>
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #28a745;
+            --accent-color: #0056b3;
+            --light-bg: #f4f4f4;
+            --dark-text: #333;
+            --light-text: #fff;
+            --card-bg: #fff;
+            --border-radius: 12px;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
             margin: 0;
             padding: 0;
+            line-height: 1.6;
         }
+        
         .container {
-            background: #fff;
-            max-width: 700px;
-            margin: 50px auto;
+            background: var(--card-bg);
+            max-width: 800px;
+            margin: 30px auto;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
         h1 {
-            color: #007BFF;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-top: 20px;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+        
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
         }
-        li {
-            margin: 10px 0;
-            font-size: 18px;
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
         }
-        .highlight {
-            color: #28a745;
-            font-weight: bold;
-        }
+        
         .cta {
-            background: #007BFF;
-            color: #fff;
-            padding: 15px;
+            background: var(--primary-color);
+            color: var(--light-text);
+            padding: 15px 25px;
             border-radius: 8px;
             display: inline-block;
             text-decoration: none;
             font-size: 18px;
-            margin-top: 20px;
-            margin-right: 10px; /* Adicionado para separar os botões */
-        }
-        .cta:hover {
-            background: #0056b3;
-        }
-        .images {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .images img {
-            width: 80%; 
-            max-width: 800px; 
-            border-radius: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: block;
+        }
+        
+        .cta:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 25px 0 15px;
+        }
+        
+        .form-container {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        form {
+            max-width: 600px;
             margin: 0 auto;
         }
-        form {
-            text-align: left;
-            margin-top: 20px;
-            text-align: center;
-        }
+        
         form label {
             display: block;
-            margin-bottom: 5px;
-            text-align: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: left;
         }
+        
         form input, form textarea {
-            width: calc(70% - 22px);
-            padding: 10px;
-            margin-bottom: 15px;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
         }
+        
+        form input:focus, form textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
         form button {
-            background: #28a745;
+            background: var(--secondary-color);
             color: white;
-            padding: 10px 15px;
+            padding: 14px 25px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
+        
+        form button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
         .testimonials {
-            margin-top: 30px;
+            margin-top: 40px;
         }
+        
         .testimonial {
             background-color: #f9f9f9;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
-        footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        
+        .testimonial:before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 40px;
+            color: #ddd;
+            line-height: 1;
         }
-        footer p {
-            margin: 5px 0;
+        
+        .testimonial p {
+            position: relative;
+            z-index: 1;
+            font-style: italic;
         }
+        
         .reputation {
-            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
         }
+        
         .logo {
-           width: 100%;
+            width: 100%;
             max-width: 600px;
             height: auto;
             display: block;
             margin: 0 auto;
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
         .whatsapp-contact {
             background: white;
             color: black;
-            padding: 10px 15px;
+            padding: 15px;
             border-radius: 8px;
-            display: inline-block;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
-            margin-top: 10px;
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
+        
+        .whatsapp-contact:hover {
+            transform: translateY(-2px);
+        }
+        
         .whatsapp-icon {
             width: 50px;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        footer p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+                width: auto;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .cta {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -150,50 +256,53 @@
         <br>
         <br>
         <br>
-            
-<p class="highlight">Informe seus dados e receba o contato de um especialista</p>
         </div>
-        <form onsubmit="enviarWhatsApp(event)">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" required>
-
-    <label for="contato">Contato:</label>
-    <input type="tel" id="contato" name="contato" required>
-
-    <label for="placa">Placa:</label>
-    <input type="text" id="placa" name="placa">
-
-    <label for="veiculo">Marca, Modelo e Ano do Veículo:</label>
-    <input type="text" id="veiculo" name="veiculo" required>
-
-    <label for="descricao">Conte um pouco do que você precisa:</label>
-<textarea id="descricao" name="descricao" rows="4" required>Inclua o Cupom Aqui!</textarea>
-<br> 
-    <button type="submit">Solicitar Plano Personalizado</button>
-</form>
-
-<script>
-    function enviarWhatsApp(event) {
-        event.preventDefault();
         
-        let nome = document.getElementById("nome").value;
-        let contato = document.getElementById("contato").value;
-        let placa = document.getElementById("placa").value;
-        let veiculo = document.getElementById("veiculo").value;
-        let descricao = document.getElementById("descricao").value;
+        <div class="form-container">
+            <p class="highlight">Informe seus dados e receba o contato de um especialista</p>
+            <form onsubmit="enviarWhatsApp(event)">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo">
 
-        let mensagem = `Olá, meu nome é ${nome}. Meu contato é ${contato}.`;
-        if (placa) {
-            mensagem += ` Minha placa é ${placa}.`;
-        }
-        mensagem += ` Meu veículo é ${veiculo}. Aqui está minha necessidade: ${descricao}.`;
+                <label for="contato">Contato:</label>
+                <input type="tel" id="contato" name="contato" required placeholder="Seu número de telefone">
 
-        let numeroWhatsApp = "5562998643045";
-        let url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+                <label for="placa">Placa:</label>
+                <input type="text" id="placa" name="placa" placeholder="Placa do veículo (opcional)">
 
-        window.open(url, "_blank");
-    }
-</script>
+                <label for="veiculo">Marca, Modelo e Ano do Veículo:</label>
+                <input type="text" id="veiculo" name="veiculo" required placeholder="Ex: Volkswagen Gol 2020">
+
+                <label for="descricao">Conte um pouco do que você precisa:</label>
+                <textarea id="descricao" name="descricao" rows="4" required placeholder="Inclua o Cupom Aqui!"></textarea>
+                
+                <button type="submit">Solicitar Contato</button>
+            </form>
+        </div>
+
+        <script>
+            function enviarWhatsApp(event) {
+                event.preventDefault();
+                
+                let nome = document.getElementById("nome").value;
+                let contato = document.getElementById("contato").value;
+                let placa = document.getElementById("placa").value;
+                let veiculo = document.getElementById("veiculo").value;
+                let descricao = document.getElementById("descricao").value;
+
+                let mensagem = `Olá, meu nome é ${nome}. Meu contato é ${contato}.`;
+                if (placa) {
+                    mensagem += ` Minha placa é ${placa}.`;
+                }
+                mensagem += ` Meu veículo é ${veiculo}. Aqui está minha necessidade: ${descricao}.`;
+
+                let numeroWhatsApp = "5562998643045";
+                let url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+
+                window.open(url, "_blank");
+            }
+        </script>
+
         <div class="testimonials">
             <h2>O que nossos clientes dizem</h2>
             <div class="testimonial">
@@ -204,26 +313,20 @@
             </div>
         </div>
 
-        <div style="text-align: center;">
-    <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/reclameaqui.png" alt="Reputação 8.9/10" width="150">
-    <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">Reputação 8.9/10</p>
+        <div class="reputation">
+            <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/reclameaqui.png" alt="Reputação 8.9/10" width="150">
+            <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">Reputação 8.9/10</p>
         </div>
 
         <footer>
             <div class="whatsapp-contact">
-    <a href="https://linktr.ee/agvcatalao" target="_blank">
-        <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/iconewh2.png" class="whatsapp-icon">
-    </a>
-    <p>Paulo Felipe - 62 9 9864-3045 - Consultor Executivo</p>
+                <a href="https://linktr.ee/agvcatalao" target="_blank">
+                    <img src="https://raw.githubusercontent.com/agvcatalao2025/landing-page-responsiva/main/iconewh2.png" class="whatsapp-icon" alt="WhatsApp">
+                </a>
+                <p>Paulo Felipe - 62 9 9864-3045 - Consultor Executivo</p>
             </div>
             <p><strong>Endereço AGV Catalão:</strong> Av. Antônio Seba, - Castelo Branco II, Catalão - GO</p>
         </footer>
     </div>
 </body>
 </html>
-</body>
-</html>
-        </footer>
-    </div>
-</body>
-</html>	
